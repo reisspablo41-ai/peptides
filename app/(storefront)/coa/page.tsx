@@ -1,11 +1,12 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Download, ArrowLeft, ZoomIn, ZoomOut, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 
-export default function COAViewerPage() {
+function COAContent() {
   const searchParams = useSearchParams()
   const url = searchParams.get('url') ?? ''
   const lot = searchParams.get('lot') ?? 'N/A'
@@ -52,7 +53,6 @@ export default function COAViewerPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Zoom controls — only for images */}
           {!isPdf && (
             <div className="hidden sm:flex items-center gap-1 bg-[#114030] rounded-lg p-1">
               <button
@@ -73,7 +73,6 @@ export default function COAViewerPage() {
             </div>
           )}
 
-          {/* Download */}
           <a
             href={url}
             download
@@ -116,9 +115,24 @@ export default function COAViewerPage() {
       {/* Bottom bar */}
       <div className="bg-[#0b2620] border-t border-[#1a6b58]/30 px-4 py-2 text-center flex-shrink-0">
         <p className="text-[#64748b] text-xs">
-          This certificate was issued by an independent, ISO 17025-accredited laboratory. Lot ID: <span className="text-[#7fd4bb] font-mono">{lot}</span>
+          This certificate was issued by an independent, ISO 17025-accredited laboratory. Lot ID:{' '}
+          <span className="text-[#7fd4bb] font-mono">{lot}</span>
         </p>
       </div>
     </div>
+  )
+}
+
+export default function COAViewerPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#0d2e22] flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-[#3db896] border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <COAContent />
+    </Suspense>
   )
 }
