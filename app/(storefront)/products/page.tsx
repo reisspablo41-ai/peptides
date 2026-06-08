@@ -1,6 +1,8 @@
 import Link from 'next/link'
 import { FlaskConical, ShieldCheck, SlidersHorizontal, Search } from 'lucide-react'
 import { createServerClient } from '@/lib/supabase/server'
+import { getServerTranslations } from '@/lib/locale'
+import { COA_SLUGS } from '@/lib/coa'
 import type { Product, Category } from '@/lib/types'
 
 async function getData(category?: string, search?: string) {
@@ -45,17 +47,22 @@ export default async function ProductsPage({
 }: {
   searchParams: Promise<{ category?: string; search?: string }>
 }) {
-  const params = await searchParams
+  const [params, { t }] = await Promise.all([
+    searchParams,
+    getServerTranslations(),
+  ])
+
   const { categories, products } = await getData(params.category, params.search)
+  const tp = t.products
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
       {/* Page header */}
       <div className="bg-[#0d2e22] border-b border-[#1a6b58]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-          <h1 className="text-2xl font-bold text-white mb-1">Research Peptides Catalog</h1>
+          <h1 className="text-2xl font-bold text-white mb-1">{tp.catalogTitle}</h1>
           <p className="text-[#64748b] text-sm">
-            {products.length} product{products.length !== 1 ? 's' : ''} — all independently COA-verified
+            {products.length} {products.length !== 1 ? tp.productPlural : tp.productSingular} {tp.allCoaVerified}
           </p>
         </div>
       </div>
@@ -67,7 +74,7 @@ export default async function ProductsPage({
             <div className="bg-white border border-[#e2e8f0] rounded-xl p-5">
               <div className="flex items-center gap-2 mb-4">
                 <SlidersHorizontal className="w-4 h-4 text-[#64748b]" />
-                <span className="text-sm font-semibold text-[#0f172a]">Filters</span>
+                <span className="text-sm font-semibold text-[#0f172a]">{tp.filters}</span>
               </div>
 
               {/* Search */}
@@ -78,7 +85,7 @@ export default async function ProductsPage({
                     name="search"
                     type="text"
                     defaultValue={params.search ?? ''}
-                    placeholder="Search peptides…"
+                    placeholder={tp.searchPlaceholder}
                     className="w-full pl-8 pr-3 py-2 text-xs border border-[#e2e8f0] rounded-lg bg-[#f8fafc] focus:outline-none focus:ring-2 focus:ring-[#1a6b58]/30 focus:border-[#1a6b58] placeholder:text-[#94a3b8]"
                   />
                 </form>
@@ -87,7 +94,7 @@ export default async function ProductsPage({
               {/* Category list */}
               <div>
                 <p className="text-xs font-semibold text-[#64748b] uppercase tracking-widest mb-2">
-                  Category
+                  {tp.category}
                 </p>
                 <ul className="flex flex-col gap-1">
                   <li>
@@ -99,7 +106,7 @@ export default async function ProductsPage({
                           : 'text-[#475569] hover:bg-[#f1f5f9]'
                       }`}
                     >
-                      All Products
+                      {tp.allProducts}
                     </Link>
                   </li>
                   {categories.map((cat) => (
@@ -150,7 +157,7 @@ export default async function ProductsPage({
                       {product.stock_quantity === 0 && (
                         <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
                           <span className="bg-[#0f172a] text-white text-xs font-medium px-3 py-1 rounded-full">
-                            Out of Stock
+                            {tp.outOfStock}
                           </span>
                         </div>
                       )}
@@ -172,10 +179,12 @@ export default async function ProductsPage({
                         <span className="text-base font-bold text-[#0d2e22]">
                           ${Number(product.price_per_unit).toFixed(2)}
                         </span>
-                        <div className="flex items-center gap-1 text-xs text-[#10b981]">
-                          <ShieldCheck className="w-3 h-3" />
-                          <span>COA</span>
-                        </div>
+                        {COA_SLUGS.has(product.slug) && (
+                          <div className="flex items-center gap-1 text-xs text-[#10b981]">
+                            <ShieldCheck className="w-3 h-3" />
+                            <span>{tp.coa}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </Link>
@@ -184,15 +193,13 @@ export default async function ProductsPage({
             ) : (
               <div className="flex flex-col items-center justify-center py-24 text-center">
                 <FlaskConical className="w-12 h-12 text-[#cbd5e1] mb-4" />
-                <h3 className="font-semibold text-[#0f172a] mb-2">No products found</h3>
-                <p className="text-sm text-[#64748b]">
-                  Try a different search or browse all categories.
-                </p>
+                <h3 className="font-semibold text-[#0f172a] mb-2">{tp.noProductsFound}</h3>
+                <p className="text-sm text-[#64748b]">{tp.noProductsDesc}</p>
                 <Link
                   href="/products"
                   className="mt-4 text-sm text-[#3db896] hover:underline"
                 >
-                  Clear filters
+                  {tp.clearFilters}
                 </Link>
               </div>
             )}

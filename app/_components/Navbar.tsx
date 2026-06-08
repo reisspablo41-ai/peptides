@@ -1,14 +1,16 @@
 'use client'
 
 import Link from 'next/link'
-import { ShoppingCart, Menu, X, FlaskConical } from 'lucide-react'
+import { ShoppingCart, Menu, X, FlaskConical, Search } from 'lucide-react'
 import { useState } from 'react'
 import { useCart } from '@/app/_context/CartContext'
 import { useLanguage } from '@/app/_context/LanguageContext'
 import LanguageSelector from '@/app/_components/LanguageSelector'
+import SearchOverlay from '@/app/_components/SearchOverlay'
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
   const { totalItems } = useCart()
   const { t } = useLanguage()
 
@@ -20,98 +22,151 @@ export default function Navbar() {
   ]
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0d2e22] border-b border-[#1a6b58]/40 shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <>
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
 
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#1a6b58] group-hover:bg-[#228070] transition-colors">
-              <FlaskConical className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-white font-bold text-lg tracking-tight">
-              Clarion<span className="text-[#3db896]">Peptides</span>
-            </span>
-          </Link>
-
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-[#7fd4bb] hover:text-white text-sm font-medium transition-colors"
+      <header className="sticky top-0 z-50 bg-[#0d2e22] border-b border-[#1a6b58]/40 shadow-lg">
+        {/* Contact bar */}
+        <div className="border-b border-[#1a6b58]/30 bg-[#071a14]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-center sm:justify-end gap-5 py-1.5 text-xs text-[#7fd4bb]">
+              <a
+                href="https://t.me/Clarionpeps"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 hover:text-white transition-colors"
               >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+                <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+                </svg>
+                {t.nav.telegramLabel}
+              </a>
+              <a
+                href="tel:+14172372146"
+                className="flex items-center gap-1.5 hover:text-white transition-colors"
+              >
+                <svg className="w-3.5 h-3.5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.77a16 16 0 0 0 6 6l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/>
+                  <line x1="12" y1="12" x2="12" y2="12"/>
+                </svg>
+                <span>+1 (417) 237-2146</span>
+                <span className="text-[#3db896]">· {t.nav.phoneLabel}</span>
+              </a>
+            </div>
+          </div>
+        </div>
 
-          {/* Cart + language + mobile toggle */}
-          <div className="flex items-center gap-2">
-            <LanguageSelector />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
 
-            <Link
-              href="/cart"
-              className="relative flex items-center gap-1.5 text-[#7fd4bb] hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-[#1a6b58]/30"
-            >
-              <div className="relative">
-                <ShoppingCart className="w-5 h-5" />
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-[#1a6b58] group-hover:bg-[#228070] transition-colors">
+                <FlaskConical className="w-5 h-5 text-white" />
+              </div>
+              <span className="text-white font-bold text-lg tracking-tight">
+                Clarion<span className="text-[#3db896]">Peptides</span>
+              </span>
+            </Link>
+
+            {/* Desktop nav */}
+            <nav className="hidden md:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-[#7fd4bb] hover:text-white text-sm font-medium transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+
+            {/* Search + language + cart + mobile toggle */}
+            <div className="flex items-center gap-2">
+              {/* Search button */}
+              <button
+                onClick={() => setSearchOpen(true)}
+                aria-label={t.nav.search}
+                className="flex items-center gap-1.5 text-[#7fd4bb] hover:text-white transition-colors px-2.5 py-1.5 rounded-lg hover:bg-[#1a6b58]/30"
+              >
+                <Search className="w-5 h-5" />
+                <span className="text-sm font-medium hidden lg:inline">{t.nav.search}</span>
+              </button>
+
+              <LanguageSelector />
+
+              <Link
+                href="/cart"
+                className="relative flex items-center gap-1.5 text-[#7fd4bb] hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-[#1a6b58]/30"
+              >
+                <div className="relative">
+                  <ShoppingCart className="w-5 h-5" />
+                  {totalItems > 0 && (
+                    <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] bg-[#3db896] text-[#0d2e22] text-[10px] font-bold rounded-full flex items-center justify-center px-1 leading-none">
+                      {totalItems > 99 ? '99+' : totalItems}
+                    </span>
+                  )}
+                </div>
+                <span className="text-sm font-medium hidden sm:inline">{t.nav.cart}</span>
                 {totalItems > 0 && (
-                  <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] bg-[#3db896] text-[#0d2e22] text-[10px] font-bold rounded-full flex items-center justify-center px-1 leading-none">
-                    {totalItems > 99 ? '99+' : totalItems}
+                  <span className="hidden sm:inline text-xs text-[#3db896] font-semibold">
+                    ({totalItems})
                   </span>
                 )}
-              </div>
-              <span className="text-sm font-medium hidden sm:inline">{t.nav.cart}</span>
-              {totalItems > 0 && (
-                <span className="hidden sm:inline text-xs text-[#3db896] font-semibold">
-                  ({totalItems})
-                </span>
-              )}
-            </Link>
-
-            <button
-              className="md:hidden text-[#7fd4bb] hover:text-white transition-colors p-1.5"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Toggle menu"
-            >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div className="md:hidden border-t border-[#1a6b58]/40 bg-[#0d2e22]">
-          <div className="px-4 py-3 flex flex-col gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="text-[#7fd4bb] hover:text-white text-sm font-medium py-2 px-3 rounded-lg hover:bg-[#1a6b58]/30 transition-colors"
-              >
-                {link.label}
               </Link>
-            ))}
-            <Link
-              href="/cart"
-              onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-2 text-[#7fd4bb] hover:text-white text-sm font-medium py-2 px-3 rounded-lg hover:bg-[#1a6b58]/30 transition-colors"
-            >
-              <ShoppingCart className="w-4 h-4" />
-              {t.nav.cart}
-              {totalItems > 0 && (
-                <span className="ml-auto bg-[#3db896] text-[#0d2e22] text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
-                  {totalItems}
-                </span>
-              )}
-            </Link>
+
+              <button
+                className="md:hidden text-[#7fd4bb] hover:text-white transition-colors p-1.5"
+                onClick={() => setMobileOpen(!mobileOpen)}
+                aria-label="Toggle menu"
+              >
+                {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         </div>
-      )}
-    </header>
+
+        {/* Mobile menu */}
+        {mobileOpen && (
+          <div className="md:hidden border-t border-[#1a6b58]/40 bg-[#0d2e22]">
+            <div className="px-4 py-3 flex flex-col gap-1">
+              {/* Mobile search */}
+              <button
+                onClick={() => { setMobileOpen(false); setSearchOpen(true) }}
+                className="flex items-center gap-2 text-[#7fd4bb] hover:text-white text-sm font-medium py-2 px-3 rounded-lg hover:bg-[#1a6b58]/30 transition-colors"
+              >
+                <Search className="w-4 h-4" />
+                {t.nav.search}
+              </button>
+
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="text-[#7fd4bb] hover:text-white text-sm font-medium py-2 px-3 rounded-lg hover:bg-[#1a6b58]/30 transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <Link
+                href="/cart"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-2 text-[#7fd4bb] hover:text-white text-sm font-medium py-2 px-3 rounded-lg hover:bg-[#1a6b58]/30 transition-colors"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                {t.nav.cart}
+                {totalItems > 0 && (
+                  <span className="ml-auto bg-[#3db896] text-[#0d2e22] text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
+            </div>
+          </div>
+        )}
+      </header>
+    </>
   )
 }

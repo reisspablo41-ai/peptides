@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ShoppingCart, Check } from 'lucide-react'
 import { useCart } from '@/app/_context/CartContext'
+import { useLanguage } from '@/app/_context/LanguageContext'
 import type { Product } from '@/lib/types'
 
 export default function AddToCartButton({
@@ -13,6 +14,7 @@ export default function AddToCartButton({
   disabled: boolean
 }) {
   const { addItem } = useCart()
+  const { t } = useLanguage()
   const [qty, setQty] = useState(1)
   const [added, setAdded] = useState(false)
 
@@ -26,7 +28,7 @@ export default function AddToCartButton({
     <div className="flex flex-col gap-3">
       {/* Quantity selector */}
       <div className="flex items-center gap-3">
-        <span className="text-xs text-[#64748b]">Quantity</span>
+        <span className="text-xs text-[#64748b]">{t.common.quantity}</span>
         <div className="flex items-center border border-[#e2e8f0] rounded-lg overflow-hidden">
           <button
             onClick={() => setQty((q) => Math.max(1, q - 1))}
@@ -58,12 +60,12 @@ export default function AddToCartButton({
         {added ? (
           <>
             <Check className="w-4 h-4" />
-            Added to Cart
+            {t.common.addedToCart}
           </>
         ) : (
           <>
             <ShoppingCart className="w-4 h-4" />
-            {disabled ? 'Out of Stock' : 'Add to Cart'}
+            {disabled ? t.common.outOfStock : t.common.addToCart}
           </>
         )}
       </button>
