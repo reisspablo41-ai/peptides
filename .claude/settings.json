@@ -5,7 +5,17 @@
       "Bash(npx next *)",
       "Bash(ls ~/Downloads/ | grep -i \"test\\\\|report\\\\|janoshik\\\\|coa\\\\|TB\\\\|GHK\\\\|MOTS\\\\|Tirze\" 2>/dev/null | head -20)",
       "Read(//Users/joseph/Downloads/**)",
-      "Bash(ls ~/Downloads/ 2>/dev/null | head -30)"
+      "Bash(ls ~/Downloads/ 2>/dev/null | head -30)",
+      "Bash(cp ~/Downloads/c725149e9947771a7757.png /Users/joseph/Desktop/peptides/public/coas/bpc-157-coa.png)",
+      "Skill(run)",
+      "Skill(run:*)",
+      "Bash(lsof -ti:3000)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/)",
+      "Bash(npx --yes chromium-cli screenshot --url \"http://localhost:3000\" --width 1440 --height 900 --output /tmp/home-full.png)",
+      "Bash(npx playwright *)"
+    ],
+    "additionalDirectories": [
+      "/Users/joseph/Downloads"
     ]
   }
 }

@@ -13,6 +13,7 @@ export const translations = {
       searchNoResults: 'No products found for',
       searchHint: 'Press Escape or click outside to close',
       telegramLabel: 'Message us on Telegram',
+      whatsappLabel: 'Message us on WhatsApp',
       phoneLabel: 'Text or Call',
     },
     ageGate: {
@@ -86,6 +87,7 @@ export const translations = {
       addToCart: 'Add to Cart',
       addedToCart: 'Added to Cart',
       viewProduct: 'View Product',
+      viewCoa: 'View COA',
       backToCatalog: 'Back to Catalog',
       readMore: 'Read more',
       researchUseOnly: 'Research use only',
@@ -114,6 +116,7 @@ export const translations = {
       forResearchOnly: 'For Research Purposes Only — Not for Human or Veterinary Use.',
       quickContacts: 'Quick Contacts',
       telegramContact: 'Message on Telegram',
+      whatsappContact: 'Message on WhatsApp',
       phoneContact: 'Text or Call',
     },
     products: {
@@ -349,6 +352,7 @@ export const translations = {
       searchNoResults: 'Nenhum produto encontrado para',
       searchHint: 'Pressione Escape ou clique fora para fechar',
       telegramLabel: 'Fale pelo Telegram',
+      whatsappLabel: 'Fale pelo WhatsApp',
       phoneLabel: 'Texto ou Ligação',
     },
     ageGate: {
@@ -422,6 +426,7 @@ export const translations = {
       addToCart: 'Adicionar ao Carrinho',
       addedToCart: 'Adicionado ao Carrinho',
       viewProduct: 'Ver Produto',
+      viewCoa: 'Ver COA',
       backToCatalog: 'Voltar ao Catálogo',
       readMore: 'Saiba mais',
       researchUseOnly: 'Somente para pesquisa',
@@ -450,6 +455,7 @@ export const translations = {
       forResearchOnly: 'Somente para Fins de Pesquisa — Não Destinado ao Uso Humano ou Veterinário.',
       quickContacts: 'Contatos Rápidos',
       telegramContact: 'Mensagem no Telegram',
+      whatsappContact: 'Mensagem no WhatsApp',
       phoneContact: 'Texto ou Ligação',
     },
     products: {

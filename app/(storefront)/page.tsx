@@ -6,7 +6,7 @@ import {
 } from 'lucide-react'
 import { createServerClient } from '@/lib/supabase/server'
 import type { Product } from '@/lib/types'
-import { COA_SLUGS } from '@/lib/coa'
+import { COA_SLUGS, getCoaUrl } from '@/lib/coa'
 import { getServerTranslations } from '@/lib/locale'
 import TestimonialsSlider from '@/app/_components/TestimonialsSlider'
 import FaqAccordion from '@/app/_components/FaqAccordion'
@@ -23,7 +23,9 @@ async function getFeaturedProducts(): Promise<Product[]> {
     const supabase = createServerClient()
     const { data } = await supabase
       .from('products').select('*, categories(name, slug)')
-      .eq('is_active', true).order('created_at', { ascending: false }).limit(4)
+      .eq('is_active', true)
+      .in('slug', Array.from(COA_SLUGS))
+      .order('name')
     return data ?? []
   } catch { return [] }
 }
@@ -38,7 +40,7 @@ async function getProductSlugMap(): Promise<Map<string, string>> {
   } catch { return new Map() }
 }
 
-const popularSlugs = ['bpc-157', 'tb-500', 'epithalon', 'semax', 'ghk-cu', 'igf-1-lr3']
+const popularSlugs = ['bpc-157-10mg', 'tb-500', 'epithalon', 'semax', 'ghk-cu', 'igf-1-lr3']
 const popularIcons = [HeartPulse, HeartPulse, Leaf, Brain, Dna, FlaskConical]
 const popularColors = [
   'text-rose-500',    'text-[#1a6b58]', 'text-purple-500',
@@ -196,29 +198,44 @@ export default async function HomePage() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {featuredProducts.length > 0 ? (
-            <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.map((p) => (
-                <StaggerItem key={p.id}>
-                  <Link href={`/products/${p.slug}`} className="group bg-white border border-[#e2e8f0] rounded-xl overflow-hidden hover:shadow-xl hover:border-[#1a6b58]/40 transition-all duration-300">
-                    <div className="aspect-square bg-[#f1f5f9] flex items-center justify-center relative">
-                      {p.image_url
-                        ? <Image src={p.image_url} alt={p.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                        : <div className="flex flex-col items-center gap-2 text-[#94a3b8]"><FlaskConical className="w-12 h-12" /><span className="text-xs">Research Peptide</span></div>}
-                      <div className="absolute top-3 right-3 bg-[#0d2e22] text-[#3db896] text-xs font-semibold px-2 py-1 rounded-full border border-[#1a6b58]/40">{p.purity}</div>
+            <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+              {featuredProducts.map((p) => {
+                const coaUrl = getCoaUrl(p.slug)
+                const viewerUrl = coaUrl
+                  ? `/coa?url=${encodeURIComponent(coaUrl)}&lot=${encodeURIComponent(p.structural_batch_code ?? '')}&product=${encodeURIComponent(p.name)}`
+                  : null
+                return (
+                  <StaggerItem key={p.id}>
+                    <div className="group bg-white border border-[#e2e8f0] rounded-xl overflow-hidden hover:shadow-xl hover:border-[#1a6b58]/40 transition-all duration-300 flex flex-col">
+                      <Link href={`/products/${p.slug}`} className="flex-1">
+                        <div className="aspect-square bg-[#f1f5f9] flex items-center justify-center relative">
+                          {p.image_url
+                            ? <Image src={p.image_url} alt={p.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+                            : <div className="flex flex-col items-center gap-2 text-[#94a3b8]"><FlaskConical className="w-12 h-12" /><span className="text-xs">Research Peptide</span></div>}
+                          <div className="absolute top-3 right-3 bg-[#0d2e22] text-[#3db896] text-xs font-semibold px-2 py-1 rounded-full border border-[#1a6b58]/40">{p.purity}</div>
+                        </div>
+                        <div className="p-4 pb-3">
+                          <div className="text-xs text-[#1a6b58] font-medium mb-1 uppercase tracking-wide">{p.specification}</div>
+                          <h3 className="font-semibold text-[#0f172a] text-sm leading-snug mb-2 group-hover:text-[#1a6b58] transition-colors">{p.name}</h3>
+                          <div className="flex items-center justify-between">
+                            <span className="text-lg font-bold text-[#0d2e22]">${Number(p.price_per_unit).toFixed(2)}</span>
+                            <div className="flex items-center gap-1 text-xs text-[#1a6b58]"><ShieldCheck className="w-3.5 h-3.5" /><span>{t.home.featuredCoaAvailable}</span></div>
+                          </div>
+                        </div>
+                      </Link>
+                      {viewerUrl && (
+                        <Link
+                          href={viewerUrl}
+                          className="mx-3 mb-3 flex items-center justify-center gap-1.5 py-2 border border-[#1a6b58]/40 hover:border-[#1a6b58] hover:bg-[#edf7f2] text-[#1a6b58] rounded-lg text-xs font-semibold transition-colors"
+                        >
+                          <FileText className="w-3.5 h-3.5" />
+                          {t.common.viewCoa}
+                        </Link>
+                      )}
                     </div>
-                    <div className="p-4">
-                      <div className="text-xs text-[#1a6b58] font-medium mb-1 uppercase tracking-wide">{p.specification}</div>
-                      <h3 className="font-semibold text-[#0f172a] text-sm leading-snug mb-2 group-hover:text-[#1a6b58] transition-colors">{p.name}</h3>
-                      <div className="flex items-center justify-between mt-3">
-                        <span className="text-lg font-bold text-[#0d2e22]">${Number(p.price_per_unit).toFixed(2)}</span>
-                        {COA_SLUGS.has(p.slug) && (
-                          <div className="flex items-center gap-1 text-xs text-[#1a6b58]"><ShieldCheck className="w-3.5 h-3.5" /><span>{t.home.featuredCoaAvailable}</span></div>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                </StaggerItem>
-              ))}
+                  </StaggerItem>
+                )
+              })}
             </StaggerContainer>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

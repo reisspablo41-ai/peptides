@@ -1,5 +1,5 @@
 export const COA_URLS: Record<string, string> = {
-  'bpc-157':    '/test-report.png',
+  'bpc-157-10mg': '/coas/bpc-157-coa.png',
   'tb-500':     '/coas/tb-500-coa.png',
   'ghk-cu':     '/coas/ghk-cu-coa.png',
   'mots-c':     '/coas/mots-c-coa.png',
