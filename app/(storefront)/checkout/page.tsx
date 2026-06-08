@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ShieldCheck, Lock, ArrowRight, FlaskConical } from 'lucide-react'
+import { ShieldCheck, Lock, ArrowRight, FlaskConical, Coins, DollarSign, Zap, Smartphone, Building2, CreditCard } from 'lucide-react'
 import { useCart } from '@/app/_context/CartContext'
 import { useLanguage } from '@/app/_context/LanguageContext'
 
@@ -15,6 +15,7 @@ interface FormData {
   city: string
   postal_code: string
   country: string
+  payment_method: string
 }
 
 const initialForm: FormData = {
@@ -26,7 +27,17 @@ const initialForm: FormData = {
   city: '',
   postal_code: '',
   country: '',
+  payment_method: '',
 }
+
+const PAYMENT_METHODS = [
+  { id: 'crypto',      label: 'Crypto',       Icon: Coins       },
+  { id: 'cashapp',     label: 'CashApp',      Icon: DollarSign  },
+  { id: 'zelle',       label: 'Zelle',        Icon: Zap         },
+  { id: 'apple-pay',   label: 'Apple Pay',    Icon: Smartphone  },
+  { id: 'chime',       label: 'Chime',        Icon: Building2   },
+  { id: 'credit-card', label: 'Credit Card',  Icon: CreditCard  },
+]
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -46,8 +57,12 @@ export default function CheckoutPage() {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }))
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    if (!form.payment_method) {
+      setError('Please select a payment method.')
+      return
+    }
     setSubmitting(true)
     setError('')
 
@@ -69,6 +84,7 @@ export default function CheckoutPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...snapshot,
+          payment_method: snapshot.payment_method,
           total_amount: total,
           items: cartSnapshot.map(({ product_id, quantity, price_at_purchase }) => ({
             product_id,
@@ -99,6 +115,7 @@ export default function CheckoutPage() {
           city: snapshot.city,
           postalCode: snapshot.postal_code,
           country: snapshot.country,
+          paymentMethod: snapshot.payment_method,
           items: cartSnapshot.map(({ name, specification, quantity, price_at_purchase }) => ({
             name,
             specification,
@@ -238,6 +255,32 @@ export default function CheckoutPage() {
                       className={inputClass}
                     />
                   </div>
+                </div>
+              </div>
+
+              {/* Payment Method */}
+              <div className="bg-white border border-[#e2e8f0] rounded-xl p-6">
+                <h2 className="font-bold text-[#0f172a] mb-1">Payment Method <span className="text-red-500">*</span></h2>
+                <p className="text-xs text-[#64748b] mb-5">Select how you&apos;d like to pay — instructions will be sent after your order is placed.</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {PAYMENT_METHODS.map(({ id, label, Icon }) => {
+                    const selected = form.payment_method === id
+                    return (
+                      <button
+                        key={id}
+                        type="button"
+                        onClick={() => setForm((f) => ({ ...f, payment_method: id }))}
+                        className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
+                          selected
+                            ? 'border-[#1a6b58] bg-[#edf7f2] text-[#0d2e22]'
+                            : 'border-[#e2e8f0] bg-white text-[#475569] hover:border-[#1a6b58]/40 hover:bg-[#f8fafc]'
+                        }`}
+                      >
+                        <Icon className={`w-4 h-4 flex-shrink-0 ${selected ? 'text-[#1a6b58]' : 'text-[#94a3b8]'}`} />
+                        {label}
+                      </button>
+                    )
+                  })}
                 </div>
               </div>
 
