@@ -138,6 +138,7 @@ export interface OrderEmailPayload {
   country: string
   items: OrderLineItem[]
   totalAmount: number
+  paymentMethod?: string
 }
 
 export interface ContactEmailPayload {
@@ -235,6 +236,7 @@ function buildAdminOrderHtml(o: OrderEmailPayload) {
       ${infoRow('Email', o.customerEmail)}
       ${infoRow('Phone', o.customerPhone ?? '—')}
       ${infoRow('Total', `$${o.totalAmount.toFixed(2)} USD`)}
+      ${infoRow('Payment Method', o.paymentMethod ?? '—')}
     </table>
 
     <h3 style="margin:0 0 12px;color:#0f172a;font-size:14px;font-weight:700;">Line Items</h3>
